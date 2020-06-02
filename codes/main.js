@@ -1,55 +1,56 @@
+// libraries importing
 require("dotenv").config();
-//#region express configures
-var express = require("express");
-var path = require("path");
-var logger = require("morgan");
-const session = require("client-sessions");
-//const DButils = require("./modules/DButils");
-const DButils = require("./modules/DButils");
+const express = require("express");//
+const bodyParser = require("body-parser");
+//var path = require("path");
+const logger = require("morgan");//
+const session = require("client-sessions");   
+const DButils = require("./DB/DButils");
 
-var app = express();
-app.use(logger("dev")); //logger
-app.use(express.json()); // parse application/json
-app.use(
-  session({
-    cookieName: "session", // the cookie key name
-    secret: process.env.COOKIE_SECRET, // the encryption key
-    duration: 20 * 60 * 1000, // expired after 20 sec
-    activeDuration: 0 // if expiresIn < activeDuration,
-    //the session will be extended by activeDuration milliseconds
-  })
-);
-app.use(express.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
-app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
-
-var port = process.env.PORT || "3000";
-//#endregion
+//Routes importing
+const auth = require("./routes/auth");
 const user = require("./routes/user");
 const profile = require("./routes/profile");
 const recipes = require("./routes/recipes");
 
-//#region cookie middleware
-app.use(function (req, res, next) {
-  if (req.session && req.session.user_id) {
-    DButils.execQuery("SELECT user_id FROM dbo.users")
-      .then((users) => {
-        if (users.find((x) => x.user_id === req.session.user_id)) {
-          req.user_id = req.session.user_id;
-        }
-        next();
-      })
-      .catch((error) => next(error));
-  } else {
-    next();
-  }
+//App settings and config
+var app = express();
+var port = process.env.PORT;
+
+//parse application/x-www-urlencoded
+app.use(bodyParser.urlencoded({extended: false}));
+//parse application/json
+app.use(bodyParser.json());
+//print request logs
+app.use(logger(":method :url :status :res[content-length] - :response-time ms")); //logger
+//settings cookies configuration
+app.use(
+  session({
+      cookieName: "session", 
+      secret: process.env.COOKIE_SECRET , // the encryption key - check with shir what we need set here!
+      duration: 80 * 1000, //expired after 80 sec
+      activeDuration: 0,
+  })
+);
+
+//app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
+
+//end point that check if the server is alive
+app.get("/alive",(req,res)=>{
+  res.send("I'm alive");
 });
-//#endregion
 
-app.get("/", (req, res) => res.send("welcome"));
-
+//Routing
 app.use("/user", user);
 app.use("/profile", profile);
 app.use("/recipes", recipes);
+app.use(auth); // anything that doesn't start in "/users" or "/recipes" or "/profile" enter here (auth contains register and login)
+
+//Default router - not "/users" or "/recipes" or auth(register/login) or "/profile"
+app.use((req,res)=>{
+  res.sendStatus(404); //not found 
+});
+
 
 app.use(function (err, req, res, next) {
   console.error(err);
@@ -60,9 +61,19 @@ const server = app.listen(port, () => {
   console.log(`Server listen on port ${port}`);
 });
 
-process.on("SIGINT", function () {
-  if (server) {
-    server.close(() => console.log("server closed"));
-  }
-  process.exit();
-});
+
+
+// app.use(function (req, res, next) {
+//   if (req.session && req.session.user_id) {
+//     DButils.execQuery("SELECT user_id FROM dbo.users")
+//       .then((users) => {
+//         if (users.find((x) => x.user_id === req.session.user_id)) {
+//           req.user_id = req.session.user_id;
+//         }
+//         next();
+//       })
+//       .catch((error) => next(error));
+//   } else {
+//     next();
+//   }
+// });

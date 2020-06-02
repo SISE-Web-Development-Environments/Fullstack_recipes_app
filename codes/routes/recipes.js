@@ -1,53 +1,33 @@
 var express = require("express");
 var router = express.Router();
-const axios = require("axios");
 
-const api_domain = "https://api.spoonacular.com/recipes";
+ const search_util = require("../routes/utiles/search_recipes"); 
 
-router.get("/Information", async (req, res, next) => {
-  try {
-    const recipe = await getRecipeInfo(req.query.recipe_id);
-    res.send({ data: recipe.data });
-  } catch (error) {
-    next(error);
-  }
+router.use((req, res, next)=>{
+    console.log("Recipes route");
+    next();
 });
 
-//#region example1 - make serach endpoint
-router.get("/search", async (req, res, next) => {
-  try {
-    const { query, cuisine, diet, intolerances, number } = req.query;
-    const search_response = await axios.get(`${api_domain}/search`, {
-      params: {
-        query: query,
-        cuisine: cuisine,
-        diet: diet,
-        intolerances: intolerances,
-        number: number,
-        instructionsRequired: true,
-        apiKey: process.env.spooncular_apiKey
-      }
-    });
-    let recipes = await Promise.all(
-      search_response.data.results.map((recipe_raw) =>
-        getRecipeInfo(recipe_raw.id)
-      )
-    );
-    recipes = recipes.map((recipe) => recipe.data);
-    res.send({ data: recipes });
-  } catch (error) {
-    next(error);
-  }
+//routes
+router.get("/search/query/:searchQuery/amount/:num",(req,res)=>{
+    const {searchQuery, num} = req.params; // req.params contains 2 params: num and serch query. fot instance : num: "3" serchQuery: "pizza"
+    search_params= {}; 
+    search_params.query = searchQuery // in the spooncolar api the name of searchQuery param is "query", so we write -"search_params.query"
+    search_params.number = num;
+    search_params.instructionRequired = true;
+    
+    //check if optional queries params exists (cuisine,diet,intolerance) and if they exist we will add them to search_params
+    search_util.extractQueriesParams(req.query, search_params); 
+    
+    search_util
+        .searchForRescipes(search_params)
+        .then((info_array)=>res.send(info_array)) // return to client info array about the recipes that return from the search
+        .catch((error)=>{
+            console.log(error);
+            res.sendStatus(500);
+        });
 });
-//#endregion
-
-function getRecipeInfo(id) {
-  return axios.get(`${api_domain}/${id}/information`, {
-    params: {
-      includeNutrition: false,
-      apiKey: process.env.spooncular_apiKey
-    }
-  });
-}
 
 module.exports = router;
+
+
