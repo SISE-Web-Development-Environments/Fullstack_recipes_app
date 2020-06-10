@@ -1,14 +1,13 @@
 var express = require("express");
 var router = express.Router();
-
- const search_util = require("../routes/utiles/search_recipes"); 
+const DButils = require("../DB/DButils");
+const search_util = require("../routes/utiles/search_recipes"); 
 
 router.use((req, res, next)=>{
     console.log("Recipes route");
     next();
 });
 
-//routes
 router.get("/search/query/:searchQuery/amount/:num",(req,res)=>{
     const {searchQuery, num} = req.params; // req.params contains 2 params: num and serch query. fot instance : num: "3" serchQuery: "pizza"
     search_params= {}; 
@@ -28,6 +27,43 @@ router.get("/search/query/:searchQuery/amount/:num",(req,res)=>{
         });
 });
 
+router.get('/information/:recipeID', (req, res) => {
+    const {recipeID} = req.params; 
+    search_params= {}; 
+    search_params.recipeID = recipeID;
+    search_util
+        .searchForSpecificRescipe(search_params)
+        .then((info_array)=>{
+            res.send(info_array);// return to client info array about the recipes that return from the search
+        }) 
+        .catch((error)=>{
+            console.log(error);
+            res.sendStatus(500);
+        });
+
+    if(req.session && req.session.user_id){
+        var query = ' INSERT INTO dbo.usersInduction VALUES ('+"'"+req.session.user_id+"'"+','+search_params.recipeID+', 0,1,default)';
+        DButils.execQuery(query).catch((error)=>{
+            console.log(error);
+            res.sendStatus(500);
+        });    
+    }     
+});
+
+// 3 random recipes
+router.get("/random", (req, res, next) => {
+    search_util
+    .randomRecipes()
+    .then((info_array)=>res.send(info_array)) 
+    .catch((error)=>{
+        console.log(error);
+        res.sendStatus(500);
+    });
+});
+
 module.exports = router;
 
 
+
+
+  

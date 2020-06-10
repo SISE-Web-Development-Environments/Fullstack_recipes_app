@@ -10,7 +10,6 @@ const DButils = require("./DB/DButils");
 //Routes importing
 const auth = require("./routes/auth");
 const user = require("./routes/user");
-const profile = require("./routes/profile");
 const recipes = require("./routes/recipes");
 
 //App settings and config
@@ -28,7 +27,7 @@ app.use(
   session({
       cookieName: "session", 
       secret: process.env.COOKIE_SECRET , // the encryption key - check with shir what we need set here!
-      duration: 80 * 1000, //expired after 80 sec
+      duration: 12*60*60 * 1000, //expired after 12 hour
       activeDuration: 0,
   })
 );
@@ -42,11 +41,10 @@ app.get("/alive",(req,res)=>{
 
 //Routing
 app.use("/user", user);
-app.use("/profile", profile);
 app.use("/recipes", recipes);
-app.use(auth); // anything that doesn't start in "/users" or "/recipes" or "/profile" enter here (auth contains register and login)
+app.use(auth); // anything that doesn't start in "/users" or "/recipes" enter here (auth contains register and login)
 
-//Default router - not "/users" or "/recipes" or auth(register/login) or "/profile"
+//Default router - not "/users" or "/recipes" or auth(register/login) or /profile
 app.use((req,res)=>{
   res.sendStatus(404); //not found 
 });

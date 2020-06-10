@@ -1,65 +1,142 @@
 var express = require("express");
 var router = express.Router();
-
 const DButils = require("../DB/DButils");
-
 const bcrypt = require("bcrypt");
-//Authenticate all incoming reuests by use middleware
-// router.use(function (req, res, next) {
-//   if (req.session && req.session.user_id) {
-//     const id = req.session.user_id;
-//     checkIdOnDb(id);
-//     const username = checkIdOnDb(id); // if user found, the user contains the data about user
-//     if (username){ 
-//         req.username = username; //we push to req object the data about user
-//         next();
-//     }
-//   } else {
-//     res.sendStatus(401); // if user not found or cookie doesn't exist return unauthorized
-//   }
-// });
+const search_util = require("../routes/utiles/search_recipes");
+
 
 router.use(function (req, res, next) {
   if (req.session && req.session.user_id) {
-    DButils.execQuery(" SELECT user_id , username FROM dbo.users")
+    DButils.execQuery("SELECT user_id FROM dbo.users")
       .then((users) => {
-        if (users.find((x) => x.user_id === id)) {
-         var y = users.find((y) => y.user_id === id);
-         var result=y.username;
-         req.username = result;
-         next();
+        if (users.find((x) => x.user_id === req.session.user_id)) {
+          req.user_id = req.session.user_id;
+          console.log("user middelwar testing");
         }
+        next();
       })
       .catch((error) => next(error));
   } else {
-    res.sendStatus(401); // if user not found or cookie doesn't exist return unauthorized
+    res.sendStatus({ status: 401, message: "Content is not available to an unrecognized user please log-in" }); // if user not found or cookie doesn't exist return unauthorized
   }
 });
 
-// function checkIdOnDb(id){
-//   DButils.execQuery(" SELECT user_id , username FROM dbo.users")
-//       .then((users) => {
-//         if (users.find((x) => x.user_id === id)) {
-//          var y = users.find((y) => y.user_id === id);
-//          var result=y.username;
-//          req.username = result;
-//          next();
-//         }
-//       })
-//       .catch((error) => next(error));
-// }
 
-router.get ("/recipeInfo/:ids", (req,res) => {
+router.get("/recipeInfo/:ids", (req, res) => {
   const ids = JSON.parse(req.params.ids); //JASON parse enable that return number array(not string array)
-  const user_name = req.username;
-  console.log(ids,user_name);
-  const userRecipesData =  getUserInfoOnRecipes(user_name, ids); //need to Write getUserInfoOnRecipes function that go to the DB and return  about each recipe id if the user watched and/or saved this recpie
-  res.send(userRecipesData);
+  const user = req.user_id;
+  console.log(ids, user);
+  getUserInfoOnRecipes(user, ids).then((result) => {
+    console.log(result);
+    res.send(result);
+  }); 
 });
 
-function getUserInfoOnRecipes(user_name, ids){
-  console.log("blablabla");
+
+async function getUserInfoOnRecipes(user, ids) {
+  var query = " SELECT * FROM dbo.usersInduction where user_id='" + user + "'";
+  try {
+    const recipesResultFromDB = await DButils.execQuery(query);
+    return recipesResultFromDB.filter((x) => ids.includes(x.recipe_id)).map((x) => { return { [x.recipe_id]: { saved: x.saved, watched: x.watched } } });
+  } catch (error) { next(error) };
 }
+
+//#region favorites
+router.get("/getFavorites", function (req, res) {
+  const user = req.user_id;
+  var query = " SELECT recipe_id FROM dbo.usersInduction where user_id='" + user +"'"+' AND saved = 1';
+  DButils.execQuery(query)
+    .then((recipes_id_list) => {
+        search_util.searchForRescipes_onlyPreview(recipes_id_list)
+          .then((info_array) => res.send(info_array))
+          .catch((error) => {
+            console.log(error);
+            res.sendStatus(500);
+        });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    });
+});
+
+router.put("/addFavorite/:recipeId",async (req, res) => { 
+  try {
+    // await user_util.addToMyFavoriteRecipes(req.user_id, req.params.recipeId);
+    const user = req.user_id;
+    const recipeID=req.params.recipeId;
+    var query="SELECT * FROM dbo.usersInduction where user_id='" + user +"'"+' AND recipe_id=' + recipeID;
+    result= await DButils.execQuery(query);
+    if(result[0].saved == 0){
+      var query="UPDATE dbo.usersInduction SET saved='1',watch_time=default WHERE user_id='" + user +"'"+' AND recipe_id=' + recipeID;
+      await DButils.execQuery(query);
+      res.send("Recipe added succefuly to favorite");
+    }
+    else{
+      res.send("This recipe already exists in your favorites");
+    }
+  }catch(error){
+    res.sendStatus(500);
+  }
+})
+
+// last 3 watched recipes
+router.get("/lastwatchedRecipes", (req, res, next)=>{
+  const user = req.user_id;
+  var query = "SELECT TOP (3) * FROM [dbo].[usersInduction] where user_id='" + user +"'"+" ORDER BY [watch_time] DESC";
+  DButils.execQuery(query)
+    .then((row) => {
+        search_util.searchForRescipes_onlyPreview(row)
+          .then((info_array) => res.send(info_array))
+          .catch((error) => {
+            console.log(error);
+            res.sendStatus(500);
+        });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    });
+}); 
+
+
+router.get("/personalRecipes", function (req, res) {
+  const user = req.user_id;
+  var query = " SELECT * FROM dbo.myRecipes where user_id='" + user + "'";
+  DButils.execQuery(query)
+    .then((all_user_recipe_info_list) => {
+        search_util.searchForPersonalRecipes(all_user_recipe_info_list)
+          .then((info_array) => res.send(info_array))
+          .catch((error) => {
+            console.log(error);
+            res.sendStatus(500);
+        });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    });
+});
+
+
+router.get("/familyRecipes", function (req, res) {
+  const user = req.user_id;
+  var query = " SELECT * FROM dbo.familyRecipes where user_id='" + user + "'";
+  DButils.execQuery(query)
+    .then((all_user_recipe_info_list) => {
+        search_util.searchForfamilyRecipes(all_user_recipe_info_list)
+          .then((info_array) => res.send(info_array))
+          .catch((error) => {
+            console.log(error);
+            res.sendStatus(500);
+        });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.sendStatus(500);
+    });
+});
 
 
 module.exports = router;
+
