@@ -4,20 +4,25 @@ var router = express.Router();
 const DButils = require("../DB/DButils");
 const bcrypt = require("bcrypt");
 
-//handels register
 router.post("/Register",
   async (req, res, next) => {
     try {
-      const users = await DButils.execQuery("SELECT username FROM dbo.users");
-     // username exists
-      if (users.find((x) => x.username === req.body.username))
-        throw { status: 409, message: "Username already exist" };
-
-    // missing parameters
+      // missing parameters
       if(!req.body.firstname || !req.body.lastname ||  !req.body.email ||  !req.body.profileurl || !req.body.username || !req.body.password || !req.body.country){
-        throw { status: 409, message: "one or more of the details is missing" };
+        throw { status: 500, message: "one or more of the details is missing" };
       }
-
+      const users = await DButils.execQuery("SELECT username FROM dbo.users");
+      // username exists
+      if (users.find((x) => x.username === req.body.username))
+        throw { status: 500, message: "Username already exist" };
+      const emails = await DButils.execQuery("SELECT email FROM dbo.users ");
+      // email exists
+      if (emails.find((x) => x.email === req.body.email))
+        throw { status: 500, message: "email already exist" };
+      //confirmation_password
+      if(req.body.password != req.body.confirmation_password){
+        throw { status: 500, message: "The password does not match" };
+      }
       // add the new user
       let hash_password = bcrypt.hashSync(
         req.body.password,
@@ -26,7 +31,7 @@ router.post("/Register",
       await DButils.execQuery(
         `INSERT INTO dbo.users VALUES (default, '${req.body.username}','${req.body.firstname}','${req.body.lastname}','${req.body.country}', '${hash_password}','${req.body.email}','${req.body.profileurl}')`
       );
-      res.status(201).send({ message: "user created", success: true });
+      res.status(200).send({ message: "user created", success: true });
 
     } catch (error) {
       next(error);
@@ -34,7 +39,6 @@ router.post("/Register",
   }
 );
 
-//handels login
 router.post("/Login", async (req, res, next) => {
     try {
       // check that username exists
