@@ -1,11 +1,11 @@
 // libraries importing
 require("dotenv").config();
-const express = require("express");//
+const express = require("express");
 const bodyParser = require("body-parser");
-//var path = require("path");
-const logger = require("morgan");//
+const logger = require("morgan");
 const session = require("client-sessions");   
-const DButils = require("./DB/DButils");
+// const DButils = require("./DB/DButils");
+const cors = require("cors");
 
 //Routes importing
 const auth = require("./routes/auth");
@@ -21,7 +21,10 @@ app.use(bodyParser.urlencoded({extended: false}));
 //parse application/json
 app.use(bodyParser.json());
 //print request logs
-app.use(logger(":method :url :status :res[content-length] - :response-time ms")); //logger
+app.use(logger(":method :url :status :res[content-length] - :response-time ms")); 
+// settings cors
+ app.use(cors());
+ app.options("*", cors());
 //settings cookies configuration
 app.use(
   session({
