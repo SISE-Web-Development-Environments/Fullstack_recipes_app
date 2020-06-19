@@ -23,8 +23,12 @@ app.use(bodyParser.json());
 //print request logs
 app.use(logger(":method :url :status :res[content-length] - :response-time ms")); 
 // settings cors
- app.use(cors());
- app.options("*", cors());
+const corsConfig = {
+  origin: true,
+  credentials: true
+};
+app.use(cors(corsConfig));
+app.options("*", cors(corsConfig));
 //settings cookies configuration
 app.use(
   session({
