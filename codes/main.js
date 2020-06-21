@@ -41,7 +41,6 @@ app.use(
     cookie: {
       ephemeral: false, // when true, cookie expires when the browser closes
       httpOnly: false, // when true, cookie is not accessible from javascript
-      secure: false, // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
     },
   })
 );
