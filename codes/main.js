@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
-const session = require("client-sessions");   
+const session = require("client-sessions");
 // const DButils = require("./DB/DButils");
 const cors = require("cors");
 
@@ -17,32 +17,39 @@ var app = express();
 var port = process.env.PORT;
 
 //parse application/x-www-urlencoded
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 //parse application/json
 app.use(bodyParser.json());
 //print request logs
-app.use(logger(":method :url :status :res[content-length] - :response-time ms")); 
+app.use(
+  logger(":method :url :status :res[content-length] - :response-time ms")
+);
 // settings cors
 const corsConfig = {
   origin: true,
-  credentials: true
+  credentials: true,
 };
 app.use(cors(corsConfig));
 app.options("*", cors(corsConfig));
 //settings cookies configuration
 app.use(
   session({
-      cookieName: "session", 
-      secret: process.env.COOKIE_SECRET , // the encryption key - check with shir what we need set here!
-      duration: 60*60 * 1000, //expired after 1 hour
-      activeDuration: 0,
+    cookieName: "session",
+    secret: process.env.COOKIE_SECRET, // the encryption key - check with shir what we need set here!
+    duration: 60 * 60 * 1000, //expired after 1 hour
+    activeDuration: 0,
+    cookie: {
+      ephemeral: false, // when true, cookie expires when the browser closes
+      httpOnly: false, // when true, cookie is not accessible from javascript
+      secure: false, // when true, cookie will only be sent over SSL. use key 'secureProxy' instead if you handle SSL not in your node process
+    },
   })
 );
 
 //app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
 
 //end point that check if the server is alive
-app.get("/alive",(req,res)=>{
+app.get("/alive", (req, res) => {
   res.send("I'm alive");
 });
 
@@ -52,10 +59,9 @@ app.use("/recipes", recipes);
 app.use(auth); // anything that doesn't start in "/users" or "/recipes" enter here (auth contains register and login)
 
 //Default router - not "/users" or "/recipes" or auth(register/login) or /profile
-app.use((req,res)=>{
-  res.sendStatus(404); //not found 
+app.use((req, res) => {
+  res.sendStatus(404); //not found
 });
-
 
 app.use(function (err, req, res, next) {
   console.error(err);
@@ -65,8 +71,6 @@ app.use(function (err, req, res, next) {
 const server = app.listen(port, () => {
   console.log(`Server listen on port ${port}`);
 });
-
-
 
 // app.use(function (req, res, next) {
 //   if (req.session && req.session.user_id) {
