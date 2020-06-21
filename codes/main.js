@@ -39,9 +39,7 @@ app.use(
     duration: 60 * 60 * 1000, //expired after 1 hour
     activeDuration: 0,
     cookie: {
-      httpOnly: false,
-      ephemeral: false,
-    },
+      httpOnly: false,    },
   })
 );
 

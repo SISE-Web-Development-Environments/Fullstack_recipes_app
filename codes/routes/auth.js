@@ -16,9 +16,6 @@ router.post("/Register",
       if (users.find((x) => x.username === req.body.username))
         throw { status: 500, message: "Username already exist" };
       const emails = await DButils.execQuery("SELECT email FROM dbo.users ");
-      // email exists
-      if (emails.find((x) => x.email === req.body.email))
-        throw { status: 500, message: "email already exist" };
       //confirmation_password
       if(req.body.password != req.body.confirmation_password){
         throw { status: 500, message: "The password does not match" };
