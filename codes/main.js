@@ -40,6 +40,7 @@ app.use(
     activeDuration: 0,
     cookie: {
       httpOnly: false,
+      ephemeral: false,
     },
   })
 );
