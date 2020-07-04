@@ -25,13 +25,13 @@ app.use(
   logger(":method :url :status :res[content-length] - :response-time ms")
 );
 // settings cors
-// const corsConfig = {
-//   origin: true,
-//   credentials: true,
-
-// };
-// app.use(cors(corsConfig));
-// app.options("*", cors(corsConfig));
+const corsConfig = {
+  origin: true,
+  credentials: true,
+  
+};
+app.use(cors(corsConfig));
+app.options("*", cors(corsConfig));
 //settings cookies configuration
 app.use(
   session({
@@ -40,8 +40,7 @@ app.use(
     duration: 60 * 60 * 1000, //expired after 1 hour
     activeDuration: 0,
     cookie: {
-      httpOnly: false,
-    },
+      httpOnly: false,    },
   })
 );
 
