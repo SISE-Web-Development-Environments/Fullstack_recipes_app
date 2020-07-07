@@ -77,13 +77,11 @@ function extractRecipes_Preview_Instructions(recipes_info) {
       glutenFree,
       image,
       servings,
-     // instructions,
+      // instructions,
       analyzedInstructions,
     } = recipes_info.data;
-    let instructions=extractInstructions(analyzedInstructions);
-   
-      
-    
+    let instructions = extractInstructions(analyzedInstructions);
+
     return {
       id: id,
       title: title,
@@ -290,10 +288,10 @@ function extractRecipes_All_information(recipes_info) {
     extendedIngredients,
     analyzedInstructions,
   } = recipes_info.data;
-  
+
   //  let instructions = ;
-    let ingredients = extractRelevantIngredients(extendedIngredients);
- 
+  let ingredients = extractRelevantIngredients(extendedIngredients);
+
   let instructions = extractInstructions(analyzedInstructions);
   return {
     id: id,
@@ -326,22 +324,20 @@ function extractRelevantIngredients(extendedIngredients) {
 
 function extractInstructions(analyzedInstructions) {
   let newInstructions = [];
-  let stepNum = 1;
+  // let stepNum = 1;
   if (analyzedInstructions[0] != undefined) {
-    
     const x = analyzedInstructions[0].steps.length;
     const y = analyzedInstructions[0].steps;
     for (let i = 0; i < x; i++) {
       newInstructions.push(
-        stepNum +
-        ". " +
-        analyzedInstructions[0].steps[i].step 
-        
-        );
-        stepNum++;
-      }
+        // stepNum +
+        // ". " +
+        analyzedInstructions[0].steps[i].step
+      );
+      // stepNum++;
     }
-      return newInstructions;
+  }
+  return newInstructions;
 }
 //#endregion
 
