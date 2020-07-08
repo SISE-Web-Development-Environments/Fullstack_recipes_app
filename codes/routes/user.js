@@ -22,7 +22,7 @@ router.use(function (req, res, next) {
 });
 
 
-router.get("/recipeInfo/:ids", (req, res) => {
+router.get("/recipesInfo/:ids", (req, res) => {
   const ids = JSON.parse(req.params.ids); //JASON parse enable that return number array(not string array)
   const user = req.user_id;
   console.log(ids, user);

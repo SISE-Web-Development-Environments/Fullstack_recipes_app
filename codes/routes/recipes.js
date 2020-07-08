@@ -9,7 +9,7 @@ router.use((req, res, next)=>{
 });
 
 router.get("/search/query/:searchQuery/amount/:num",(req,res)=>{
-    const {searchQuery, num} = req.params; // req.params contains 2 params: num and serch query. fot instance : num: "3" serchQuery: "pizza"
+    const {searchQuery, num} = req.params; // req.params contains 2 params: num and serch query. for instance : num: "3" serchQuery: "pizza"
     try{
         if(searchQuery == "<string>"){
             res.send( {message: "searchQuery parameter is missing" });
