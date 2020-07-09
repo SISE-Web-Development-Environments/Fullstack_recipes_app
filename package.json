@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node codes/main.js"
+    "start": "node codes/main.js",
+     "debug": "node --nolazy --inspect-brk=9229 codes/main.js"
   },
   "keywords": [],
   "author": "",

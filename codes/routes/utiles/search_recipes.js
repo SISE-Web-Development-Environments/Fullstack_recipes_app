@@ -77,23 +77,11 @@ function extractRecipes_Preview_Instructions(recipes_info) {
       glutenFree,
       image,
       servings,
+      // instructions,
       analyzedInstructions,
     } = recipes_info.data;
-    let instructions;
-    if (analyzedInstructions.length != 0) {
-      instructions = analyzedInstructions
-      .map((fstep) => {
-        fstep.steps[0].step = fstep.name + fstep.steps[0].step;
-        return fstep.steps;
-      })
-      .reduce((a, b) => [...a, ...b], [])
-      .reduce((a, b) => a + "\n" + b);
-      // instructions = analyzedInstructions[0].steps
-      //   .map((s) => s.step)
-      //   .reduce((a, b) => a + "\n" + b);
-    } else {
-      instructions = null;
-    }
+    let instructions = extractInstructions(analyzedInstructions);
+
     return {
       id: id,
       title: title,
@@ -199,19 +187,19 @@ function extractPreview_familyRecipes(recipes_info) {
       servings,
     } = recipes_info;
     return {
-        recipe_id: recipe_id,
-        title: title,
-        recipeOwner: recipe_owner,
-        traditionalPreparationTime: traditional_preparation_time,
-        image: image,
-        readyInMinute: readyInMinutes,
-        aggregateLikes: aggregateLikes,
-        vegetarian: vegetarian,
-        vegan: vegan,
-        glutenFree: glutenFree,
-        ingredients: ingredientDescriptionAndAmount,
-        instructions: instructions,
-        servings: servings,      
+      recipe_id: recipe_id,
+      title: title,
+      recipeOwner: recipe_owner,
+      traditionalPreparationTime: traditional_preparation_time,
+      image: image,
+      readyInMinute: readyInMinutes,
+      aggregateLikes: aggregateLikes,
+      vegetarian: vegetarian,
+      vegan: vegan,
+      glutenFree: glutenFree,
+      ingredients: ingredientDescriptionAndAmount,
+      instructions: instructions,
+      servings: servings,
     };
   });
 }
@@ -261,14 +249,14 @@ function extractPreviewRecipesData(recipes_info) {
       image,
     } = recipes_info.data;
     return {
-        id:id,
-        title: title,
-        readyInMinute: readyInMinutes,
-        aggregateLikes: aggregateLikes,
-        vegetarian: vegetarian,
-        vegan: vegan,
-        glutenFree: glutenFree,
-        image: image,
+      id: id,
+      title: title,
+      readyInMinute: readyInMinutes,
+      aggregateLikes: aggregateLikes,
+      vegetarian: vegetarian,
+      vegan: vegan,
+      glutenFree: glutenFree,
+      image: image,
     };
   });
 }
@@ -300,37 +288,23 @@ function extractRecipes_All_information(recipes_info) {
     extendedIngredients,
     analyzedInstructions,
   } = recipes_info.data;
-  let instructions;
-  let ingredients;
-  if (analyzedInstructions.length != 0) {
-    // instructions = analyzedInstructions[0].steps
-    //   .map((s) => s.step)
-    //   .reduce((a, b) => a + "\n" + b);
-    instructions = analyzedInstructions
-      .map((fstep) => {
-        fstep.steps[0].step = fstep.name + fstep.steps[0].step;
-        return fstep.steps;
-      })
-      .reduce((a, b) => [...a, ...b], [])
-      .reduce((a, b) => a + "\n" + b);
-    ingredients = extractRelevantIngredients(extendedIngredients);
-  } else {
-    instructions = null;
-    ingredients = null;
-  }
-  //let instructions =  analyzedInstructions[0].steps.map(s => s.step); // show as array
+
+  //  let instructions = ;
+  let ingredients = extractRelevantIngredients(extendedIngredients);
+
+  let instructions = extractInstructions(analyzedInstructions);
   return {
-     id:id, 
-      title: title,
-      readyInMinute: readyInMinutes,
-      aggregateLikes: aggregateLikes,
-      vegetarian: vegetarian,
-      vegan: vegan,
-      glutenFree: glutenFree,
-      image: image,
-      servings: servings,
-      instructions: instructions,
-      extendedIngredients: ingredients,
+    id: id,
+    title: title,
+    readyInMinute: readyInMinutes,
+    aggregateLikes: aggregateLikes,
+    vegetarian: vegetarian,
+    vegan: vegan,
+    glutenFree: glutenFree,
+    image: image,
+    servings: servings,
+    instructions: instructions,
+    extendedIngredients: ingredients,
   };
 }
 
@@ -348,6 +322,23 @@ function extractRelevantIngredients(extendedIngredients) {
   return relenvantIngridient;
 }
 
+function extractInstructions(analyzedInstructions) {
+  let newInstructions = [];
+  // let stepNum = 1;
+  if (analyzedInstructions[0] != undefined) {
+    const x = analyzedInstructions[0].steps.length;
+    const y = analyzedInstructions[0].steps;
+    for (let i = 0; i < x; i++) {
+      newInstructions.push(
+        // stepNum +
+        // ". " +
+        analyzedInstructions[0].steps[i].step
+      );
+      // stepNum++;
+    }
+  }
+  return newInstructions;
+}
 //#endregion
 
 //#region random
@@ -374,14 +365,14 @@ function extractRandomRecipesData(recipes_info) {
       image,
     } = recipes_info;
     return {
-        id:id,
-        title: title,
-        readyInMinute: readyInMinutes,
-        aggregateLikes: aggregateLikes,
-        vegetarian: vegetarian,
-        vegan: vegan,
-        glutenFree: glutenFree,
-        image: image,
+      id: id,
+      title: title,
+      readyInMinute: readyInMinutes,
+      aggregateLikes: aggregateLikes,
+      vegetarian: vegetarian,
+      vegan: vegan,
+      glutenFree: glutenFree,
+      image: image,
     };
   });
 }

@@ -69,5 +69,11 @@ router.post("/Logout", function (req, res) {
   res.send({ success: true, message: "logout succeeded" });
 });
 
+router.post("/UploadImg", async (req, res) => {
+  console.log('starting test');
+  console.log(req);
+  console.log(req.body);
+})
+
 module.exports = router;
 
