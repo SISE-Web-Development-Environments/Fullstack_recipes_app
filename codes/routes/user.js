@@ -33,21 +33,14 @@ router.get("/recipeInfo/:ids", (req, res) => {
   });
 });
 
-router.post("/clicked", (req, res) => {
+router.post("/clicked/:recipeID", (req, res) => {
   var query =
     `BEGIN TRY  \
-      INSERT INTO dbo.usersInduction VALUES ('${ req.user_id}', '${req.body.recipe_id}', 0, 1, default)  \
+      INSERT INTO dbo.usersInduction VALUES ('${ req.user_id}', '${req.params.recipeID}', 0, 1, default)  \
     END TRY  \
     BEGIN CATCH  \
       UPDATE  dbo.usersInduction SET watched = 1 WHERE user_id = '${ req.user_id}' \
     END CATCH`
-    // " " +
-    // "'" +
-    // req.user_id +
-    // "'" +
-    // "," +
-    // req.body.recipe_id +
-    // ", 0,1,default)";
   DButils.execQuery(query)
     .then(() => res.sendStatus(200))
     .catch((error) => {

@@ -41,20 +41,6 @@ router.get("/getRecipeInformation/:recipeID", (req, res) => {
   search_util
     .searchForSpecificRescipe(search_params)
     .then((info_array) => {
-      //   if (req.session && req.session.user_id) {
-      //     var query =
-      //       " INSERT INTO dbo.usersInduction VALUES (" +
-      //       "'" +
-      //       req.session.user_id +
-      //       "'" +
-      //       "," +
-      //       search_params.recipeID +
-      //       ", 0,1,default)";
-      //     DButils.execQuery(query).catch((error) => {
-      //       console.log(error);
-      //       res.sendStatus(500);
-      //     });
-      //   }
       res.send(info_array); // return to client info array about the recipes that return from the search
     })
     .catch((error) => {
