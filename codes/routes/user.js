@@ -53,14 +53,33 @@ router.post("/clicked/:recipeID", (req, res) => {
 async function getUserInfoOnRecipes(user, ids) {
   var query = " SELECT * FROM dbo.usersInduction where user_id='" + user + "'";
   try {
+    let obj = {};
     const recipesResultFromDB = await DButils.execQuery(query);
-    return recipesResultFromDB
+    let result = recipesResultFromDB
       .filter((x) => ids.includes(x.recipe_id))
       .map((x) => {
-        return { [x.recipe_id]: { saved: x.saved, watched: x.watched } };
+        // return { [x.recipe_id]: { saved: x.saved, watched: x.watched } };
+        obj = { [x.recipe_id]: { saved: x.saved, watched: x.watched } };
+        return obj;
       });
+
+    for (let i = 0; i < ids.length; i++) {
+      var bol = false;
+      for (let k = 0; k < result.length; k++) {
+        if (ids[i] in result[k]) {
+          bol = true;
+        }
+      }
+      if (bol === false) {
+        result.push({ [ids[i]]: { saved: false, watched: false } });
+      }
+    }
+    return result;
   } catch (error) {
-    next(error);
+    throw {
+      status: 500,
+      message: error.message + " Failed to get indication for recipes",
+    };
   }
 }
 
