@@ -25,7 +25,7 @@ UPDATE [dbo].[usersInduction]
 SET saved = 1 , watched=1
 WHERE user_id = '80cdaf14-e344-4618-b834-a9a4b71b203a' AND recipe_id=333
 
- SELECT * FROM dbo.usersInduction where user_id='9d342fc9-8871-4375-a7ee-3637d0de374b'
+ SELECT * FROM dbo.usersInduction where user_id='80cdaf14-e344-4618-b834-a9a4b71b203a'
 
 SELECT TOP (1000) [user_id]
       ,[recipe_id]
