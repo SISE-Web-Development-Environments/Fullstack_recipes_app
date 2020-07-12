@@ -38,8 +38,14 @@ router.post("/clicked/:recipeID", (req, res) => {
       INSERT INTO dbo.usersInduction VALUES ('${req.user_id}', '${req.params.recipeID}', 0, 1, default)  \
     END TRY  \
     BEGIN CATCH  \
+<<<<<<< HEAD
       UPDATE  dbo.usersInduction SET watched = 1 WHERE user_id = '${req.user_id}' \
     END CATCH`;
+=======
+      UPDATE  dbo.usersInduction SET watched = 1, watch_time = default WHERE user_id = '${ req.user_id}' AND recipe_id='${ req.params.recipeID}'
+       \
+    END CATCH`
+>>>>>>> c54a6fb8bc509d54a6cb326082297f7eb2b5c057
   DButils.execQuery(query)
     .then(() => res.sendStatus(200))
     .catch((error) => {
