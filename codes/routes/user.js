@@ -34,18 +34,14 @@ router.get("/recipeInfo/:ids", (req, res) => {
 });
 
 router.post("/clicked/:recipeID", (req, res) => {
-  var query = `BEGIN TRY  \
-      INSERT INTO dbo.usersInduction VALUES ('${req.user_id}', '${req.params.recipeID}', 0, 1, default)  \
+  var query =
+    `BEGIN TRY  \
+      INSERT INTO dbo.usersInduction VALUES ('${ req.user_id}', '${req.params.recipeID}', 0, 1, default)  \
     END TRY  \
     BEGIN CATCH  \
-<<<<<<< HEAD
-      UPDATE  dbo.usersInduction SET watched = 1 WHERE user_id = '${req.user_id}' \
-    END CATCH`;
-=======
       UPDATE  dbo.usersInduction SET watched = 1, watch_time = default WHERE user_id = '${ req.user_id}' AND recipe_id='${ req.params.recipeID}'
        \
     END CATCH`
->>>>>>> c54a6fb8bc509d54a6cb326082297f7eb2b5c057
   DButils.execQuery(query)
     .then(() => res.sendStatus(200))
     .catch((error) => {
@@ -57,33 +53,14 @@ router.post("/clicked/:recipeID", (req, res) => {
 async function getUserInfoOnRecipes(user, ids) {
   var query = " SELECT * FROM dbo.usersInduction where user_id='" + user + "'";
   try {
-    let obj = {};
     const recipesResultFromDB = await DButils.execQuery(query);
-    let result = recipesResultFromDB
+    return recipesResultFromDB
       .filter((x) => ids.includes(x.recipe_id))
       .map((x) => {
-        // return { [x.recipe_id]: { saved: x.saved, watched: x.watched } };
-        obj = { [x.recipe_id]: { saved: x.saved, watched: x.watched } };
-        return obj;
+        return { [x.recipe_id]: { saved: x.saved, watched: x.watched } };
       });
-
-    for (let i = 0; i < ids.length; i++) {
-      var bol = false;
-      for (let k = 0; k < result.length; k++) {
-        if (ids[i] in result[k]) {
-          bol = true;
-        }
-      }
-      if (bol === false) {
-        result.push({ [ids[i]]: { saved: false, watched: false } });
-      }
-    }
-    return result;
   } catch (error) {
-    throw {
-      status: 500,
-      message: error.message + " Failed to get indication for recipes",
-    };
+    next(error);
   }
 }
 
