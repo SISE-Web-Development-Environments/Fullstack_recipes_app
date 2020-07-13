@@ -23,7 +23,7 @@ router.use(function (req, res, next) {
   }
 });
 
-router.get("/recipeInfo/:ids", (req, res) => {
+router.get("/recipesInfo/:ids", (req, res) => {
   const ids = JSON.parse(req.params.ids); //JASON parse enable that return number array(not string array)
   const user = req.user_id;
   console.log(ids, user);
@@ -43,7 +43,7 @@ router.post("/clicked/:recipeID", (req, res) => {
        \
     END CATCH`
   DButils.execQuery(query)
-    .then(() => res.sendStatus(200))
+    .then(() => res.send("The recipe has been updated as viewed successfully")) 
     .catch((error) => {
       console.log(error);
       res.sendStatus(500);
@@ -107,7 +107,7 @@ router.get("/getFavorites", function (req, res) {
     });
 });
 
-router.put("/addFavorite/:recipeId", async (req, res) => {
+router.post("/addFavorite/:recipeId", async (req, res) => {
   try {
     // await user_util.addToMyFavoriteRecipes(req.user_id, req.params.recipeId);
     const user = req.user_id;
