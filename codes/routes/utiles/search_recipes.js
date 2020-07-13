@@ -3,7 +3,7 @@ const recipes_api_url = "https://api.spoonacular.com/recipes";
 const api_key = process.env.spooncular_apiKey;
 
 function extractQueriesParams(query_params, search_params) {
-  const params_list = ["diet", "cuisine", "intolerance"]; //אנחנו רצים על הרשימה הזו ולא על הרשימה שחוזרת מהשרת כי אנחנו לא יכולים לסמוך על המשתמש, יכול להיות שהוא שלח פרמטרים שלא רלוונטיים לשאליתא
+  const params_list = ["diet", "cuisine", "intolerance"]; 
   params_list.forEach((param) => {
     if (query_params[param]) {
       // if query_params contains one of each params
