@@ -3,7 +3,7 @@ const recipes_api_url = "https://api.spoonacular.com/recipes";
 const api_key = process.env.spooncular_apiKey;
 
 function extractQueriesParams(query_params, search_params) {
-  const params_list = ["diet", "cuisine", "intolerance"]; //אנחנו רצים על הרשימה הזו ולא על הרשימה שחוזרת מהשרת כי אנחנו לא יכולים לסמוך על המשתמש, יכול להיות שהוא שלח פרמטרים שלא רלוונטיים לשאליתא
+  const params_list = ["diet", "cuisine", "intolerance"]; 
   params_list.forEach((param) => {
     if (query_params[param]) {
       // if query_params contains one of each params
@@ -353,7 +353,21 @@ async function randomRecipes() {
   let random_response = await axios.get(
     `${recipes_api_url}/random?apiKey=${api_key}&number=3&instructionsRequired=true`
   );
+  for (let i = 0; i < 3; i++) {
+    if (
+      random_response.data.recipes[i].analyzedInstructions[0].steps.length ==
+        0 ||
+      random_response.data.recipes[i].image === undefined
+    ) {
+      random_response == undefined;
+      random_response = await axios.get(
+        `${recipes_api_url}/random?apiKey=${api_key}&number=3&instructionsRequired=true`
+      );
+      i == 0;
+    }
+  }
   let info_array = extractRandomRecipesData(random_response);
+
   return info_array;
 }
 

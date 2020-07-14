@@ -36,7 +36,7 @@ app.use(
   session({
     cookieName: "session",
     secret: process.env.COOKIE_SECRET, // the encryption key - check with shir what we need set here!
-    duration: 60 * 60 * 1000, //expired after 1 hour
+    duration: 20 * 60 * 1000, //expired after 20 minute
     activeDuration: 0,
     cookie: {
       httpOnly: false,    },

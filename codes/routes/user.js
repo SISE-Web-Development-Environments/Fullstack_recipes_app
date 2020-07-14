@@ -23,7 +23,7 @@ router.use(function (req, res, next) {
   }
 });
 
-router.get("/recipeInfo/:ids", (req, res) => {
+router.get("/recipesInfo/:ids", (req, res) => {
   const ids = JSON.parse(req.params.ids); //JASON parse enable that return number array(not string array)
   const user = req.user_id;
   console.log(ids, user);
@@ -34,15 +34,16 @@ router.get("/recipeInfo/:ids", (req, res) => {
 });
 
 router.post("/clicked/:recipeID", (req, res) => {
-  var query = `BEGIN TRY  \
-      INSERT INTO dbo.usersInduction VALUES ('${req.user_id}', '${req.params.recipeID}', 0, 1, default)  \
+  var query =
+    `BEGIN TRY  \
+      INSERT INTO dbo.usersInduction VALUES ('${ req.user_id}', '${req.params.recipeID}', 0, 1, default)  \
     END TRY  \
     BEGIN CATCH  \
       UPDATE  dbo.usersInduction SET watched = 1, watch_time = default WHERE user_id = '${req.user_id}' AND recipe_id='${req.params.recipeID}'
        \
     END CATCH`;
   DButils.execQuery(query)
-    .then(() => res.sendStatus(200))
+    .then(() => res.send("The recipe has been updated as viewed successfully")) 
     .catch((error) => {
       console.log(error);
       res.sendStatus(500);
