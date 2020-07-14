@@ -3,7 +3,7 @@ const recipes_api_url = "https://api.spoonacular.com/recipes";
 const api_key = process.env.spooncular_apiKey;
 
 function extractQueriesParams(query_params, search_params) {
-  const params_list = ["diet", "cuisine", "intolerance"]; 
+  const params_list = ["diet", "cuisine", "intolerance"];
   params_list.forEach((param) => {
     if (query_params[param]) {
       // if query_params contains one of each params
@@ -193,7 +193,7 @@ function extractPreview_familyRecipes(recipes_info) {
       servings,
     } = recipes_info;
     return {
-      recipe_id: recipe_id,
+      id: recipe_id,
       title: title,
       recipeOwner: recipe_owner,
       traditionalPreparationTime: traditional_preparation_time,
