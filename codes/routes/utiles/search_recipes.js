@@ -135,9 +135,12 @@ function extractPreview_PersonalRecipes(recipes_info) {
       vegetarian,
       vegan,
       glutenFree,
+      ingredientDescriptionAndAmount,
+      instructions,
+      servings,
     } = recipes_info;
     return {
-      recipe_id: recipe_id,
+      id: recipe_id,
       title: title,
       image: image,
       readyInMinute: readyInMinutes,
@@ -145,6 +148,9 @@ function extractPreview_PersonalRecipes(recipes_info) {
       vegetarian: vegetarian,
       vegan: vegan,
       glutenFree: glutenFree,
+      ingredients: ingredientDescriptionAndAmount,
+      instructions: instructions,
+      servings: servings,
     };
   });
 }

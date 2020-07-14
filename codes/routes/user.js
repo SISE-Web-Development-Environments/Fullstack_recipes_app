@@ -38,9 +38,9 @@ router.post("/clicked/:recipeID", (req, res) => {
       INSERT INTO dbo.usersInduction VALUES ('${req.user_id}', '${req.params.recipeID}', 0, 1, default)  \
     END TRY  \
     BEGIN CATCH  \
-      UPDATE  dbo.usersInduction SET watched = 1, watch_time = default WHERE user_id = '${ req.user_id}' AND recipe_id='${ req.params.recipeID}'
+      UPDATE  dbo.usersInduction SET watched = 1, watch_time = default WHERE user_id = '${req.user_id}' AND recipe_id='${req.params.recipeID}'
        \
-    END CATCH`
+    END CATCH`;
   DButils.execQuery(query)
     .then(() => res.sendStatus(200))
     .catch((error) => {
@@ -106,7 +106,7 @@ router.get("/getFavorites", function (req, res) {
     });
 });
 
-router.put("/addFavorite/:recipeId", async (req, res) => {
+router.post("/addFavorite/:recipeId", async (req, res) => {
   try {
     // await user_util.addToMyFavoriteRecipes(req.user_id, req.params.recipeId);
     const user = req.user_id;
@@ -119,11 +119,14 @@ router.put("/addFavorite/:recipeId", async (req, res) => {
       recipeID;
     result = await DButils.execQuery(query);
     if (result.length == 0) {
-      res.send(
-        "The user still not watch recipe with id: " +
-          recipeID +
-          ", first you need to watch"
-      );
+      var query =
+        "INSERT INTO dbo.usersInduction VALUES ('" +
+        user +
+        "'," +
+        recipeID +
+        ", 1,0,default)";
+      await DButils.execQuery(query);
+      res.send("Recipe added succefuly to favorite");
     }
     if (result[0].saved == 0) {
       var query =
