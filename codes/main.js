@@ -27,7 +27,6 @@ app.use(
 const corsConfig = {
   origin: true,
   credentials: true,
-  
 };
 app.use(cors(corsConfig));
 app.options("*", cors(corsConfig));
@@ -39,7 +38,8 @@ app.use(
     duration: 20 * 60 * 1000, //expired after 20 minute
     activeDuration: 0,
     cookie: {
-      httpOnly: false,    },
+      httpOnly: false,
+    },
   })
 );
 

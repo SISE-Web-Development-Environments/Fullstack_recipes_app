@@ -18,7 +18,11 @@ SELECT TOP (1000) [user_id]
 	[password] [varchar](300) NOT NULL
 )
 
-DELETE FROM [dbo].[users] WHERE username='<string>';
+
+DELETE FROM [dbo].[users] WHERE username='newuser';
+
+
+
 
 
 
