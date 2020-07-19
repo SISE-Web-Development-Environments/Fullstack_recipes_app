@@ -48,4 +48,4 @@ UPDATE dbo.usersInduction SET saved='1',watch_time=default WHERE user_id='9D342F
 
 SELECT * FROM dbo.usersInduction where user_id='9D342FC9-8871-4375-A7EE-3637D0DE374B' AND recipe_id=2225
 
-DELETE FROM [dbo].[usersInduction] WHERE recipe_id='595234' AND user_id='80cdaf14-e344-4618-b834-a9a4b71b203a';
+DELETE FROM [dbo].[usersInduction] WHERE recipe_id='612366' AND user_id='9D342FC9-8871-4375-A7EE-3637D0DE374B';
