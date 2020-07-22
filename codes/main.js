@@ -43,8 +43,6 @@ app.use(
   })
 );
 
-//app.use(express.static(path.join(__dirname, "public"))); //To serve static files such as images, CSS files, and JavaScript files
-
 //end point that check if the server is alive
 app.get("/alive", (req, res) => {
   res.send("I'm alive");
@@ -55,7 +53,7 @@ app.use("/user", user);
 app.use("/recipes", recipes);
 app.use(auth); // anything that doesn't start in "/users" or "/recipes" enter here (auth contains register and login)
 
-//Default router - not "/users" or "/recipes" or auth(register/login) or /profile
+//Default router - not "/users" or "/recipes" or auth(register/login) 
 app.use((req, res) => {
   res.sendStatus(404); //not found
 });
@@ -69,4 +67,4 @@ const server = app.listen(port, () => {
   console.log(`Server listen on port ${port}`);
 });
 
-////
+

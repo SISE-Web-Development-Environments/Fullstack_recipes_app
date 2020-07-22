@@ -9,13 +9,13 @@ router.use((req, res, next) => {
 });
 
 router.get("/search/query/:searchQuery/amount/:num", (req, res) => {
-  const { searchQuery, num } = req.params; // req.params contains 2 params: num and serch query. fot instance : num: "3" serchQuery: "pizza"
+  const { searchQuery, num } = req.params; 
   try {
     if (searchQuery == "<string>") {
       res.send({ message: "searchQuery parameter is missing" });
     }
     search_params = {};
-    search_params.query = searchQuery; // in the spooncolar api the name of searchQuery param is "query", so we write -"search_params.query"
+    search_params.query = searchQuery; 
     search_params.number = num;
     search_params.instructionRequired = true;
 

@@ -58,7 +58,6 @@ async function getUserInfoOnRecipes(user, ids) {
     let result = recipesResultFromDB
       .filter((x) => ids.includes(x.recipe_id))
       .map((x) => {
-        // return { [x.recipe_id]: { saved: x.saved, watched: x.watched } };
         obj = { [x.recipe_id]: { saved: x.saved, watched: x.watched } };
         return obj;
       });
@@ -109,7 +108,6 @@ router.get("/getFavorites", function (req, res) {
 
 router.post("/addFavorite/:recipeId", async (req, res) => {
   try {
-    // await user_util.addToMyFavoriteRecipes(req.user_id, req.params.recipeId);
     const user = req.user_id;
     const recipeID = req.params.recipeId;
     var query =

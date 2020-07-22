@@ -46,7 +46,7 @@ function extractSearchResultsdIds(search_response) {
 
 //get the preview recipe information + instructions
 async function getRecipesPreview_And_Instructions_Info(
-  recipes_id_list /*,search_params*/
+  recipes_id_list 
 ) {
   let promises = [];
 
@@ -112,7 +112,6 @@ async function getPersonalRecipesInfo(all_user_recipe_info_list) {
   //run on each id in ids list and push to promises array the promise that return from get response
   all_user_recipe_info_list.map((row) => {
     console.log(row);
-    //console.log(JSON.stringify(row));
     promises.push(row); // each promise that we push to promises arrays is get request that contains the information about each recipe
   });
   //waiting for all promises to finsh. info_responsel contains all value's promises
@@ -220,7 +219,7 @@ async function searchForRescipes_onlyPreview(row) {
 }
 
 //get the preview recipe information
-async function getRecipesPreviewInfo(row /*,search_params*/) {
+async function getRecipesPreviewInfo(row) {
   let promises = [];
 
   //run on each id in ids list and push to promises array the promise that return from get response
@@ -347,7 +346,7 @@ function extractInstructions(analyzedInstructions) {
 }
 //#endregion
 
-//#region random
+
 // 3 random recipes
 async function randomRecipes() {
   let random_response = await axios.get(
@@ -396,7 +395,7 @@ function extractRandomRecipesData(recipes_info) {
     };
   });
 }
-//#endregion
+
 
 //#region - exports
 exports.searchForRescipes = searchForRescipes; //export searchForRescipes function
