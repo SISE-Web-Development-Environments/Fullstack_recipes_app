@@ -348,7 +348,7 @@ function extractInstructions(analyzedInstructions) {
 //#endregion
 
 
-// 3 random recipes
+//#region  3 random recipes
 async function randomRecipes() {
   let random_response = await axios.get(
     `${recipes_api_url}/random?apiKey=${api_key}&number=3&instructionsRequired=true`
@@ -396,6 +396,7 @@ function extractRandomRecipesData(recipes_info) {
     };
   });
 }
+//#endregion
 
 
 //#region - exports
