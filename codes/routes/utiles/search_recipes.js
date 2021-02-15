@@ -45,9 +45,7 @@ function extractSearchResultsdIds(search_response) {
 }
 
 //get the preview recipe information + instructions
-async function getRecipesPreview_And_Instructions_Info(
-  recipes_id_list 
-) {
+async function getRecipesPreview_And_Instructions_Info(recipes_id_list ) {
   let promises = [];
 
   //run on each id in ids list and push to promises array the promise that return from get response
