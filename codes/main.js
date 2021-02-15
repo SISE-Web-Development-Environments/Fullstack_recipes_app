@@ -35,7 +35,7 @@ app.use(
   session({
     cookieName: "session",
     secret: process.env.COOKIE_SECRET, // the encryption key - check with shir what we need set here!
-    duration: 20 * 60 * 1000, //expired after 20 minute
+    duration: 20 * 60 * 1000, //expired after 20 minutes
     activeDuration: 0,
     cookie: {
       httpOnly: false,
@@ -53,7 +53,7 @@ app.use("/user", user);
 app.use("/recipes", recipes);
 app.use(auth); // anything that doesn't start in "/users" or "/recipes" enter here (auth contains register and login)
 
-//Default router - not "/users" or "/recipes" or auth(register/login) 
+//Default router - not "/users" or "/recipes" or auth(register/login)
 app.use((req, res) => {
   res.sendStatus(404); //not found
 });
@@ -66,5 +66,3 @@ app.use(function (err, req, res, next) {
 const server = app.listen(port, () => {
   console.log(`Server listen on port ${port}`);
 });
-
-
